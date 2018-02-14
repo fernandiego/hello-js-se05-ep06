@@ -1,0 +1,19 @@
+<html>
+
+<head>
+  <title>hello-js-se05-ep-06</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <script>
+    const api = axios.create({
+      baseURL: "http://localhost:3000"
+    })
+    api.get("/listpessoas").then(ret => {
+      console.log(ret)
+    })
+  </script>
+</body>
+
+</html>
