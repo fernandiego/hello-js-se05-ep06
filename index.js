@@ -5,6 +5,7 @@ const morgan = require("morgan")
 const bodyParser = require("body-parser")
 const app = express()
 const cors = require("cors")
+const vue = require("vue")
 
 app.use(cors())
 app.use(morgan("dev"))
@@ -12,8 +13,10 @@ app.use(bodyParser.json()) // what's this? what's this?
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("public"))
 
-const deuruim = res => error => res.status(500).send(error)
-
+const deuruim = res => error => {
+    res.status(500).send(error)
+    console.log(error)
+}
 
 
 app.get("/listpessoas", (req, res) => {
@@ -36,7 +39,7 @@ app.get("/listpessoas/:id", (req, res) => {
 
 app.post("/addpessoa", (req, res) => {
     const pessoa = req.body
-    knex("pessoas").insert(contato, "pessoaid").then(ret => {
+    knex("pessoas").insert(pessoa, "pessoaid").then(ret => {
         res.send(ret)
     }).catch(err => {
         res.status(500).send(err)
@@ -52,8 +55,10 @@ app.put("/save", (req, res) => {
 app.delete("/:pessoaid", (req, res) => {
     const pessoaid = req.params.pessoaid
     knex("pessoas").del().where({ pessoaid })
-        .then(ret => res.send(ret)).catch(deuruim(res))
+        .then(ret => res.send("Usuário eliminado")).catch(deuruim(res))
 })
+
+
 knex.migrate.latest().then(_ =>
     app.listen(3000, _ =>
         console.log("server online!")))

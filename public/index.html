@@ -2,16 +2,71 @@
 
 <head>
   <title>hello-js-se05-ep-06</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
+  <div id="basicform">
+    <form @submit.prevent="dosave">
+      <label>Nome:
+        <input v-model="pessoa.pessoanome" />
+      </label>
+      <br/>
+      <label>Telefone:
+        <input v-model="pessoa.pessoatelefone" />
+      </label>
+      <br/>
+      <label>Data Nasc:
+        <input v-model="pessoa.pessoadtnasc" />
+      </label>
+      <br/>
+      <input type="submit" />
+    </form>
+    <ul>
+      <li v-for="p in pessoas">
+        {{p.pessoanome}}
+        {{p.pessoatelefone}}
+        {{p.pessoadtnasc}}
+        <button @click="doDel(p)">Excluir</button>
+      </li>
+    </ul>
+  </div>
   <script>
     const api = axios.create({
       baseURL: "http://localhost:3000"
     })
-    api.get("/listpessoas").then(ret => {
-      console.log(ret)
+    new Vue({
+      el: '#basicform',
+      data: {
+        pessoas: [],
+        pessoa: {
+          pessoanome: "",
+          pessoatelefone: "",
+          pessoadtnasc: ""
+        }
+      },
+      created() {
+        this.listar()
+      },
+      methods: {
+        listar() {
+          api.get("/listpessoas")
+            .then(ret => this.pessoas = ret.data)
+        },
+        dosave() {
+          api.post("/addpessoa", this.pessoa)
+            .then(ret => {
+              alert('pessoa salva')
+              this.listar()
+            })
+        
+          },
+        doDel(p){
+          api.delete(`/${p.pessoaid}`)
+          .then(ret => this.listar())
+        }  
+      }
     })
   </script>
 </body>
